@@ -1,1 +1,1 @@
-from paillier.scheme import PaillierEncryptor, PaillierText
+from paillier.scheme import PaillierEncryptor, PaillierEncryptorFloat, PaillierText

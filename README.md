@@ -6,5 +6,3 @@ To create a cyphertext just create a ``PaillierEncryptor`` object and call its `
 Two cyphertexts can be added together by just using the "+" operator on them.
 
 This package depends on libnum, can be installed with ``pip install --user libnum``.
-
-TODO: Implement subtraction.
