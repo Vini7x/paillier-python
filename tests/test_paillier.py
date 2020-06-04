@@ -1,4 +1,5 @@
 from paillier import PaillierEncryptor, PaillierEncryptorFloat
+from paillier.extra import squared_euclidian, squared_euclidian_oneside
 import math
 
 
@@ -44,3 +45,34 @@ def test_float():
         and math.isclose(number3, res3, rel_tol=1e-5)
         and math.isclose(number4, res4, rel_tol=1e-5)
     )
+
+
+def test_euclidian():
+    pe = PaillierEncryptor()
+    p11 = 17
+    p12 = 20
+    p21 = 30
+    p22 = 23
+
+    dist = pe.decrypt(squared_euclidian(pe, [p11, p12], [p21, p22]))
+
+    dist_t = math.pow(p11 - p21, 2) + math.pow(p12 - p22, 2)
+
+    assert dist == dist_t
+
+
+def test_euclidian_oneside():
+    pe = PaillierEncryptor()
+    p11 = 17
+    p12 = 20
+    p21 = 30
+    p22 = 23
+
+    p2sqrsum = pe.encrypt((p21 * p21) + (p22 * p22))
+    p2e = [pe.encrypt(p21), pe.encrypt(p22)]
+
+    dist = pe.decrypt(squared_euclidian_oneside(pe, [p11, p12], p2sqrsum, p2e))
+
+    dist_t = math.pow(p11 - p21, 2) + math.pow(p12 - p22, 2)
+
+    assert dist == dist_t
