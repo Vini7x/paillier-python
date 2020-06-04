@@ -13,20 +13,35 @@ class PaillierText:
     Multiplication (*): Multiply this encrypted value with a plain-text value, must be an int.
     """
 
-    def __init__(self, val, n):
+    def __init__(self, val, n, precision=0):
         self.val = val
         self.n = n
+        self.precision = precision
 
     def __add__(self, other):
-        return PaillierText((self.val * other.val) % (self.n * self.n), self.n)
+        return PaillierText(
+            (self.val * other.val) % (self.n * self.n), self.n, self.precision
+        )
 
     def __mul__(self, other):
         if not isinstance(other, int):
-            raise TypeError(
-                "Multiplication of encrypted paillier text must be with an int"
-            )
+            if not isinstance(other, float):
+                raise TypeError(
+                    "Multiplication of encrypted paillier text must be with either an int or a float"
+                )
+            else:
+                pot = pow(10, self.precision)
+                num = other * pot
+                dem = pow(pot, -1, self.n)
+                n2 = self.n * self.n
 
-        return PaillierText(pow(self.val, other, self.n * self.n), self.n)
+                return PaillierText(
+                    pow(pow(self.val, num, n2), dem, n2), self.n, self.precision
+                )
+
+        return PaillierText(
+            pow(self.val, other, self.n * self.n), self.n, self.precision
+        )
 
     __rmul__ = __mul__
 
@@ -70,10 +85,11 @@ class PaillierEncryptor:
     def _l(self, x, n):
         return (x - 1) // n
 
-    def encrypt(self, m: int) -> PaillierText:
+    def encrypt(self, m: int, precision=0) -> PaillierText:
         """
         Input:
             m: the value to encrypt, must be an int
+            precision: Floating point precision, unnecessary if only using ints
         Output:
             A PaillierText object representing the encrypted value m
         """
@@ -87,7 +103,7 @@ class PaillierEncryptor:
 
         c = (pow(g, m, n * n) * pow(r, n, n * n)) % (n * n)
 
-        return PaillierText(c, n)
+        return PaillierText(c, n, precision)
 
     def decrypt(self, c: PaillierText) -> int:
         """
@@ -120,6 +136,7 @@ class PaillierEncryptorFloat(PaillierEncryptor):
         super().__init__(p=p, q=q)
         self._negthresh = int(self.public_key[0] * (negative_threshold / 4))
         self._precision = int(pow(10, precision))
+        self._precision_num = precision
 
     def encrypt(self, m) -> PaillierText:
         """
@@ -129,7 +146,7 @@ class PaillierEncryptorFloat(PaillierEncryptor):
             A PaillierText object representing the encrypted value m
         """
         int_val = int(m * self._precision)
-        return super().encrypt(int_val)
+        return super().encrypt(int_val, self._precision_num)
 
     def decrypt(self, c: PaillierText) -> float:
         """
