@@ -30,8 +30,8 @@ class PaillierText:
                     "Multiplication of encrypted paillier text must be with either an int or a float"
                 )
             else:
-                pot = pow(10, self.precision)
-                num = other * pot
+                pot = pow(10, self.precision, self.n)
+                num = int(other * pot)
                 dem = pow(pot, -1, self.n)
                 n2 = self.n * self.n
 

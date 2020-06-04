@@ -5,7 +5,7 @@ with open("README.md", "r") as readme:
 
 setuptools.setup(
     name="paillier-python",
-    version="0.0.2",
+    version="0.0.3",
     author="Vinicius E. Martins",
     author_email="vini9x@gmail.com",
     description="Simple python paillier encryption implementation",

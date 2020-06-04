@@ -47,6 +47,26 @@ def test_float():
     )
 
 
+def test_multiplications():
+    number1 = 10
+    number2 = 2
+    number3 = 2.5
+
+    number4 = number1 * number2
+    number5 = number1 * number3
+
+    pe1 = PaillierEncryptor()
+    pe2 = PaillierEncryptorFloat(precision=2)
+
+    enc11 = pe1.encrypt(number1)
+    enc12 = pe2.encrypt(number1)
+
+    res1 = pe1.decrypt(enc11 * number2)
+    res2 = pe2.decrypt(enc12 * number3)
+
+    assert number4 == res1 and math.isclose(number5, res2, rel_tol=1e-3)
+
+
 def test_euclidian():
     pe = PaillierEncryptor()
     p11 = 17
