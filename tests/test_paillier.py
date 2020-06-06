@@ -21,7 +21,7 @@ def test_int():
 
 
 def test_float():
-    pe = PaillierEncryptorFloat(precision=2)
+    pe = PaillierEncryptorFloat()
     number1 = 120.23
     number2 = 125.22
     number2e = -125.22
@@ -54,17 +54,27 @@ def test_multiplications():
 
     number4 = number1 * number2
     number5 = number1 * number3
+    number6 = number3 * number3
 
     pe1 = PaillierEncryptor()
-    pe2 = PaillierEncryptorFloat(precision=2)
+    pe2 = PaillierEncryptorFloat()
 
     enc11 = pe1.encrypt(number1)
     enc12 = pe2.encrypt(number1)
+    enc22 = pe2.encrypt(number3)
 
     res1 = pe1.decrypt(enc11 * number2)
     res2 = pe2.decrypt(enc12 * number3)
+    res3 = pe2.decrypt(enc22 * number3)
 
-    assert number4 == res1 and math.isclose(number5, res2, rel_tol=1e-3)
+    print(number6)
+    print(res3)
+
+    assert (
+        number4 == res1
+        and math.isclose(number5, res2, rel_tol=1e-3)
+        and math.isclose(number6, res3, rel_tol=1e-3)
+    )
 
 
 def test_euclidian():

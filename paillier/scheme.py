@@ -30,7 +30,7 @@ class PaillierText:
                     "Multiplication of encrypted paillier text must be with either an int or a float"
                 )
             else:
-                pot = pow(10, self.precision, self.n)
+                pot = pow(2, self.precision, self.n)
                 num = int(other * pot)
                 dem = pow(pot, -1, self.n)
                 n2 = self.n * self.n
@@ -132,10 +132,10 @@ class PaillierEncryptorFloat(PaillierEncryptor):
                             numbers over n/2 (n/(2/4)) are considered negative.
     """
 
-    def __init__(self, precision=4, negative_threshold=2, p=None, q=None):
+    def __init__(self, precision=50, negative_threshold=2, p=None, q=None):
         super().__init__(p=p, q=q)
         self._negthresh = int(self.public_key[0] * (negative_threshold / 4))
-        self._precision = int(pow(10, precision))
+        self._precision = int(pow(2, precision))
         self._precision_num = precision
 
     def encrypt(self, m) -> PaillierText:
